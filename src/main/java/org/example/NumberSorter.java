@@ -252,7 +252,6 @@ public class NumberSorter extends JFrame {
     private int partition(int lowIndex, int highIndex, int pivot) {
         int leftPointer = lowIndex;
         int rightPointer = highIndex - 1;
-
         while (leftPointer < rightPointer) {
             // Adjust comparison based on sort direction
             if (isDescending) {
@@ -272,22 +271,15 @@ public class NumberSorter extends JFrame {
             }
             swap(leftPointer, rightPointer);
         }
-
         // Fix for last value potentially being out of order
-        if (isDescending) {
-            if (numbers[leftPointer] < numbers[highIndex]) {
-                swap(leftPointer, highIndex);
-            } else {
-                leftPointer = highIndex;
-            }
+        boolean sortingCondition = isDescending
+                ? numbers[leftPointer] < numbers[highIndex]
+                : numbers[leftPointer] > numbers[highIndex];
+        if (sortingCondition) {
+            swap(leftPointer, highIndex);
         } else {
-            if (numbers[leftPointer] > numbers[highIndex]) {
-                swap(leftPointer, highIndex);
-            } else {
-                leftPointer = highIndex;
-            }
+            leftPointer = highIndex;
         }
-
         return leftPointer;
     }
 
