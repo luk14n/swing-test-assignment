@@ -61,21 +61,9 @@ public class NumberSorter extends JFrame {
         enterButton.setPreferredSize(new Dimension(150, 40));
 
         // Listener to monitor user input
-        enterButton.addActionListener(e -> {
-            try {
-                int count = Integer.parseInt(numberInput.getText().trim());
-                if (count > 0) {
-                    generateNumbers(count);
-                    switchToSortPanel();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Please enter a positive number");
-                }
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Please enter a valid number");
-            }
-        });
+        enterButton.addActionListener(getActionListener());
 
-        // Configured required layaut
+        // Configured required layout
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.insets = new Insets(20, 20, 20, 20);
@@ -88,6 +76,22 @@ public class NumberSorter extends JFrame {
         gbc.gridy = 2;
         gbc.insets = new Insets(10, 20, 20, 20);
         introPanel.add(enterButton, gbc);
+    }
+
+    private ActionListener getActionListener() {
+        return event -> {
+            try {
+                int count = Integer.parseInt(numberInput.getText().trim());
+                if (count > 0) {
+                    generateNumbers(count);
+                    switchToSortPanel();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Please enter a positive number");
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Please enter a valid number");
+            }
+        };
     }
 
     // Sort screen
@@ -124,8 +128,8 @@ public class NumberSorter extends JFrame {
         numbersPanel.setBackground(Color.WHITE);
 
         // Listeners to execute required methods when buttons pressed
-        sortButton.addActionListener(e -> startSorting());
-        resetButton.addActionListener(e -> switchToIntroPanel());
+        sortButton.addActionListener(event -> startSorting());
+        resetButton.addActionListener(event -> switchToIntroPanel());
 
         numbersPanel.setBorder(null);
         sortPanel.add(buttonPanel, BorderLayout.EAST);
@@ -177,7 +181,7 @@ public class NumberSorter extends JFrame {
             }
 
             final int index = i;
-            numButton.addActionListener(e -> {
+            numButton.addActionListener(event -> {
                 if (numbers[index] <= 30) {
                     generateNumbers(numbers.length);
                 } else {
@@ -197,13 +201,11 @@ public class NumberSorter extends JFrame {
     private void generateNumbers(int count) {
         Random random = new Random();
         numbers = new int[count];
-        boolean hasSmallNumber = false;
 
         int smallNumberIndex = random.nextInt(count);
         for (int i = 0; i < count; i++) {
             if (i == smallNumberIndex) {
                 numbers[i] = random.nextInt(31);
-                hasSmallNumber = true;
             } else {
                 numbers[i] = random.nextInt(1001);
             }
@@ -226,14 +228,11 @@ public class NumberSorter extends JFrame {
         System.out.println("Sorting in " + order + " order");
 
         // Start the sorting process with a timer
-        sortingTimer = new Timer(500, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!quickSortStep(0, numbers.length - 1)) {
-                    sortingTimer.stop();
-                    currentPivotIndex = -1;
-                    updateNumbersDisplay();
-                }
+        sortingTimer = new Timer(500, event -> {
+            if (!quickSortStep(0, numbers.length - 1)) {
+                sortingTimer.stop();
+                currentPivotIndex = -1;
+                updateNumbersDisplay();
             }
         });
         sortingTimer.start();
@@ -299,6 +298,6 @@ public class NumberSorter extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new NumberSorter());
+        SwingUtilities.invokeLater(NumberSorter::new);
     }
 }
