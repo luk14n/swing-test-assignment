@@ -309,7 +309,7 @@ public class NumberSorter extends JFrame {
         getContentPane().removeAll();
         getContentPane().add(introPanel);
         numberInput.setText("");
-        isSorted = false;
+        isSorted = false; // Sorting logic resets after reset
         revalidate();
         repaint();
     }
