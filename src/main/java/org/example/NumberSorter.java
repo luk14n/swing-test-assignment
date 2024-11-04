@@ -167,8 +167,9 @@ public class NumberSorter extends JFrame {
         JPanel[] columnPanels = new JPanel[columns];
 
         for (int i = 0; i < columns; i++) {
-            columnPanels[i] = new JPanel(new GridLayout(0, 1, 5, 5));
+            columnPanels[i] = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
             columnPanels[i].setBackground(Color.WHITE);
+            columnPanels[i].setPreferredSize(new Dimension(110, getHeight()));
             numbersPanel.add(columnPanels[i]);
         }
 
