@@ -98,13 +98,14 @@ public class NumberSorter extends JFrame {
     private void createSortPanel() {
         sortPanel = new JPanel(new BorderLayout(20, 20));
         sortPanel.setBackground(Color.WHITE);
+        sortPanel.setBorder(null);
 
         JPanel buttonPanel = new JPanel(new GridBagLayout());
         buttonPanel.setBackground(Color.WHITE);
         buttonPanel.setBorder(null);
         GridBagConstraints gbc = new GridBagConstraints();
 
-        // Sort and reset buttons
+        // Sort and Reset buttons
         JButton sortButton = createStyledButton("Sort", BUTTON_GREEN);
         JButton resetButton = createStyledButton("Reset", BUTTON_GREEN);
 
@@ -112,15 +113,16 @@ public class NumberSorter extends JFrame {
         sortButton.setPreferredSize(controlButtonSize);
         resetButton.setPreferredSize(controlButtonSize);
 
-        // Layout configuration for buttons
+        // Buttons layout
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.insets = new Insets(10, 5, 5, 8); // Add spacing below the Sort button
+        gbc.insets = new Insets(10, 10, 5, 10);
+        gbc.anchor = GridBagConstraints.NORTH;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         buttonPanel.add(sortButton, gbc);
 
-        gbc.gridy = 1;
-        gbc.insets = new Insets(5, 5, 10, 8); // Add spacing below the Reset button
+        gbc.gridy = 2;
+        gbc.insets = new Insets(5, 10, 10, 10);
         buttonPanel.add(resetButton, gbc);
 
         gbc.gridy = 2;
@@ -212,7 +214,6 @@ public class NumberSorter extends JFrame {
                 numbers[i] = random.nextInt(MAX_LARGE_NUMBER);
             }
         }
-
         updateNumbersDisplay();
     }
 
