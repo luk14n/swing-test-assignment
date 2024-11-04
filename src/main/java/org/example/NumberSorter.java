@@ -22,6 +22,7 @@ public class NumberSorter extends JFrame {
     private JPanel numbersPanel;
     private boolean isDescending = false;
     private int[] numbers;
+    private boolean isSorted = false;
 
     public NumberSorter() {
         setTitle("Number Sorter");
@@ -196,6 +197,7 @@ public class NumberSorter extends JFrame {
     private void generateNumbers(int count) {
         Random random = new Random();
         numbers = new int[count];
+        isSorted = false;
 
         int indexOfNumberLessOrEqualThanThirty = random.nextInt(count);
         for (int i = 0; i < count; i++) {
@@ -209,14 +211,23 @@ public class NumberSorter extends JFrame {
         updateNumbersDisplay();
     }
 
+    /*
+     * It is only sorting once instead of on every button click
+     * It uses the stored sorted array for further button clicks
+     */
     private void startSorting() {
         isDescending = !isDescending;
 
         // Output for tracking sorting order
         String order = isDescending ? "Descending" : "Ascending";
-        System.out.println("Sorting in " + order + " order");
+        System.out.println("Displaying in " + order + " order");
 
-        quickSort(0, numbers.length - 1);
+        if (!isSorted) {
+            quickSort(0, numbers.length - 1);
+            isSorted = true;
+        } else {
+            reverseArray();
+        }
         updateNumbersDisplay();
     }
 
@@ -288,6 +299,7 @@ public class NumberSorter extends JFrame {
     private void switchToSortPanel() {
         getContentPane().removeAll();
         getContentPane().add(sortPanel);
+        isSorted = false;
         revalidate();
         repaint();
     }
@@ -297,8 +309,19 @@ public class NumberSorter extends JFrame {
         getContentPane().removeAll();
         getContentPane().add(introPanel);
         numberInput.setText("");
+        isSorted = false;
         revalidate();
         repaint();
+    }
+
+    private void reverseArray() {
+        int left = 0;
+        int right = numbers.length - 1;
+        while (left < right) {
+            swap(left, right);
+            left++;
+            right--;
+        }
     }
 
     public static void main(String[] args) {
