@@ -205,15 +205,11 @@ public class NumberSorter extends JFrame {
         Random random = new Random();
         numbers = new int[count];
         isSorted = false;
-
-        int indexOfNumberLessOrEqualThanThirty = random.nextInt(count);
         for (int i = 0; i < count; i++) {
-            if (i == indexOfNumberLessOrEqualThanThirty) {
-                numbers[i] = random.nextInt(MAX_SMALL_NUMBER);
-            } else {
-                numbers[i] = random.nextInt(MAX_LARGE_NUMBER);
-            }
+            numbers[i] = random.nextInt(MAX_LARGE_NUMBER);
         }
+        int indexOfNumberLessOrEqualThanThirty = random.nextInt(count);
+        numbers[indexOfNumberLessOrEqualThanThirty] = random.nextInt(MAX_SMALL_NUMBER);
         updateNumbersDisplay();
     }
 
