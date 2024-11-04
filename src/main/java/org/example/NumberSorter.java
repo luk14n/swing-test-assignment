@@ -123,6 +123,10 @@ public class NumberSorter extends JFrame {
         gbc.insets = new Insets(5, 5, 10, 8); // Add spacing below the Reset button
         buttonPanel.add(resetButton, gbc);
 
+        gbc.gridy = 2;
+        gbc.weighty = 1.0;
+        buttonPanel.add(Box.createVerticalGlue(), gbc);
+
         // Numbers panel
         numbersPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         numbersPanel.setBackground(Color.WHITE);
