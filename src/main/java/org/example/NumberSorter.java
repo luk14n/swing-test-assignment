@@ -18,7 +18,7 @@ public class NumberSorter extends JFrame {
     private JPanel sortPanel;
     private JTextField numberInput;
     private JPanel numbersPanel;
-    private boolean isDescending = true;
+    private boolean isDescending = false;
     private int[] numbers;
     private Timer sortingTimer;
     private int currentPivotIndex = -1;
@@ -41,6 +41,7 @@ public class NumberSorter extends JFrame {
         setVisible(true);
     }
 
+    // Intro screen
     private void createIntroPanel() {
         introPanel = new JPanel(new GridBagLayout());
         introPanel.setBackground(Color.WHITE);
@@ -89,6 +90,7 @@ public class NumberSorter extends JFrame {
         introPanel.add(enterButton, gbc);
     }
 
+    // Sort screen
     private void createSortPanel() {
         sortPanel = new JPanel(new BorderLayout(20, 20));
         sortPanel.setBackground(Color.WHITE);
@@ -98,6 +100,7 @@ public class NumberSorter extends JFrame {
         buttonPanel.setBorder(null);
         GridBagConstraints gbc = new GridBagConstraints();
 
+        // Sort and reset buttons
         JButton sortButton = createStyledButton("Sort", BUTTON_GREEN);
         JButton resetButton = createStyledButton("Reset", BUTTON_GREEN);
 
@@ -105,6 +108,7 @@ public class NumberSorter extends JFrame {
         sortButton.setPreferredSize(controlButtonSize);
         resetButton.setPreferredSize(controlButtonSize);
 
+        // Layout configuration for buttons
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.insets = new Insets(10, 5, 5, 8); // Add spacing below the Sort button
@@ -115,9 +119,11 @@ public class NumberSorter extends JFrame {
         gbc.insets = new Insets(5, 5, 10, 8); // Add spacing below the Reset button
         buttonPanel.add(resetButton, gbc);
 
+        // Numbers panel
         numbersPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         numbersPanel.setBackground(Color.WHITE);
 
+        // Listeners to execute required methods when buttons pressed
         sortButton.addActionListener(e -> startSorting());
         resetButton.addActionListener(e -> switchToIntroPanel());
 
@@ -126,6 +132,7 @@ public class NumberSorter extends JFrame {
         sortPanel.add(new JScrollPane(numbersPanel), BorderLayout.CENTER);
     }
 
+    // Button style
     private JButton createStyledButton(String text, Color backgroundColor) {
         JButton button = new JButton(text) {
             @Override
@@ -149,6 +156,7 @@ public class NumberSorter extends JFrame {
         return button;
     }
 
+    // Updates numbers display with current sorting state
     private void updateNumbersDisplay() {
         numbersPanel.removeAll();
         int columns = (numbers.length + 9) / 10;
@@ -185,6 +193,7 @@ public class NumberSorter extends JFrame {
         numbersPanel.repaint();
     }
 
+    // Generates random numbers and adds a small number for demonstration
     private void generateNumbers(int count) {
         Random random = new Random();
         numbers = new int[count];
@@ -212,6 +221,11 @@ public class NumberSorter extends JFrame {
         currentPivotIndex = -1;
         isDescending = !isDescending;
 
+        // Output for tracking sorting order
+        String order = isDescending ? "Descending" : "Ascending";
+        System.out.println("Sorting in " + order + " order");
+
+        // Start the sorting process with a timer
         sortingTimer = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -267,6 +281,7 @@ public class NumberSorter extends JFrame {
         numbers[j] = temp;
     }
 
+    // Switches to the sorting screen
     private void switchToSortPanel() {
         getContentPane().removeAll();
         getContentPane().add(sortPanel);
@@ -274,6 +289,7 @@ public class NumberSorter extends JFrame {
         repaint();
     }
 
+    // Switches back to the intro screen
     private void switchToIntroPanel() {
         getContentPane().removeAll();
         getContentPane().add(introPanel);
