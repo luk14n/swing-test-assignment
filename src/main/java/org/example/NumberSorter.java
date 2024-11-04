@@ -22,9 +22,6 @@ public class NumberSorter extends JFrame {
     private JPanel numbersPanel;
     private boolean isDescending = false;
     private int[] numbers;
-    private Timer sortingTimer;
-    private int currentPivotIndex = -1;
-    private int sortingStep = 0;
 
     public NumberSorter() {
         setTitle("Number Sorter");
@@ -178,10 +175,6 @@ public class NumberSorter extends JFrame {
             JButton numButton = createStyledButton(String.valueOf(numbers[i]), BUTTON_BLUE);
             numButton.setPreferredSize(new Dimension(100, 40));
 
-            if (i == currentPivotIndex) {
-                numButton.setBackground(Color.YELLOW);
-            }
-
             final int index = i;
             numButton.addActionListener(event -> {
                 if (numbers[index] <= 30) {
@@ -217,63 +210,72 @@ public class NumberSorter extends JFrame {
     }
 
     private void startSorting() {
-        if (sortingTimer != null && sortingTimer.isRunning()) {
-            sortingTimer.stop();
-        }
-
-        sortingStep = 0;
-        currentPivotIndex = -1;
         isDescending = !isDescending;
 
         // Output for tracking sorting order
         String order = isDescending ? "Descending" : "Ascending";
         System.out.println("Sorting in " + order + " order");
 
-        // Start the sorting process with a timer
-        sortingTimer = new Timer(500, event -> {
-            if (!quickSortStep(0, numbers.length - 1)) {
-                sortingTimer.stop();
-                currentPivotIndex = -1;
-                updateNumbersDisplay();
-            }
-        });
-        sortingTimer.start();
+        quickSort(0, numbers.length - 1);
+        updateNumbersDisplay();
     }
 
-    private boolean quickSortStep(int low, int high) {
-        if (low < high) {
-            if (sortingStep == 0) {
-                currentPivotIndex = partition(low, high);
-                updateNumbersDisplay();
-                sortingStep++;
-                return true;
-            } else if (sortingStep == 1) {
-                sortingStep = 0;
-                quickSortStep(low, currentPivotIndex - 1);
-                return true;
+    private void quickSort(int low, int high) {
+        if (low >= high) {
+            return;
+        }
+
+        // Choose random pivot
+        int pivotIndex = new Random().nextInt(high - low) + low;
+        int pivot = numbers[pivotIndex];
+        swap(pivotIndex, high);
+
+        int leftPointer = partition(low, high, pivot);
+
+        quickSort(low, leftPointer - 1);
+        quickSort(leftPointer + 1, high);
+    }
+
+    private int partition(int lowIndex, int highIndex, int pivot) {
+        int leftPointer = lowIndex;
+        int rightPointer = highIndex - 1;
+
+        while (leftPointer < rightPointer) {
+            // Adjust comparison based on sort direction
+            if (isDescending) {
+                while (numbers[leftPointer] >= pivot && leftPointer < rightPointer) {
+                    leftPointer++;
+                }
+                while (numbers[rightPointer] <= pivot && leftPointer < rightPointer) {
+                    rightPointer--;
+                }
             } else {
-                sortingStep = 0;
-                quickSortStep(currentPivotIndex + 1, high);
-                return true;
+                while (numbers[leftPointer] <= pivot && leftPointer < rightPointer) {
+                    leftPointer++;
+                }
+                while (numbers[rightPointer] >= pivot && leftPointer < rightPointer) {
+                    rightPointer--;
+                }
             }
-        }
-        return false;
-    }
-
-    private int partition(int low, int high) {
-        int pivot = numbers[high];
-        int i = low - 1;
-
-        for (int j = low; j < high; j++) {
-            if ((isDescending && numbers[j] >= pivot) ||
-                    (!isDescending && numbers[j] <= pivot)) {
-                i++;
-                swap(i, j);
-            }
+            swap(leftPointer, rightPointer);
         }
 
-        swap(i + 1, high);
-        return i + 1;
+        // Fix for last value potentially being out of order
+        if (isDescending) {
+            if (numbers[leftPointer] < numbers[highIndex]) {
+                swap(leftPointer, highIndex);
+            } else {
+                leftPointer = highIndex;
+            }
+        } else {
+            if (numbers[leftPointer] > numbers[highIndex]) {
+                swap(leftPointer, highIndex);
+            } else {
+                leftPointer = highIndex;
+            }
+        }
+
+        return leftPointer;
     }
 
     private void swap(int i, int j) {
@@ -299,7 +301,6 @@ public class NumberSorter extends JFrame {
         repaint();
     }
 
-    // Entry point
     public static void main(String[] args) {
         SwingUtilities.invokeLater(NumberSorter::new);
     }
