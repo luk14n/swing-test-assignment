@@ -187,7 +187,7 @@ public class NumberSorter extends JFrame {
 
             final int index = i;
             numButton.addActionListener(event -> {
-                if (numbers[index] <= 30) {
+                if (numbers[index] <= MAX_SMALL_NUMBER) {
                     generateNumbers(numbers[index]);
                 } else {
                     JOptionPane.showMessageDialog(this,
