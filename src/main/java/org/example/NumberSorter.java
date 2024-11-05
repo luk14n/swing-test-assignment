@@ -222,10 +222,6 @@ public class NumberSorter extends JFrame {
     private void startSorting() {
         isDescending = !isDescending;
 
-        // Output for tracking sorting order
-        String order = isDescending ? "Descending" : "Ascending";
-        System.out.println("Displaying in " + order + " order");
-
         if (!isSorted) {
             quickSort(0, numbers.length - 1);
             isSorted = true;
