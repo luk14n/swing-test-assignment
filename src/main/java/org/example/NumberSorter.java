@@ -13,8 +13,8 @@ public class NumberSorter extends JFrame {
     private static final Color BUTTON_BLUE = new Color(67, 110, 238);
     private static final Color BUTTON_GREEN = new Color(46, 184, 93);
     private static final Color TEXT_WHITE = Color.WHITE;
-    public static final int MAX_SMALL_NUMBER = 31;
-    public static final int MAX_LARGE_NUMBER = 1001;
+    public static final int MAX_SMALL_NUMBER = 30;
+    public static final int MAX_LARGE_NUMBER = 1000;
 
     private JPanel introPanel;
     private JPanel sortPanel;
@@ -208,10 +208,10 @@ public class NumberSorter extends JFrame {
         numbers = new int[count];
         isSorted = false;
         for (int i = 0; i < count; i++) {
-            numbers[i] = random.nextInt(MAX_LARGE_NUMBER);
+            numbers[i] = random.nextInt(MAX_LARGE_NUMBER) + 1;
         }
         int indexOfNumberLessOrEqualThanThirty = random.nextInt(count);
-        numbers[indexOfNumberLessOrEqualThanThirty] = random.nextInt(MAX_SMALL_NUMBER);
+        numbers[indexOfNumberLessOrEqualThanThirty] = random.nextInt(MAX_SMALL_NUMBER) + 1;
         updateNumbersDisplay();
     }
 
