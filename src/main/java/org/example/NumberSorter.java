@@ -188,7 +188,7 @@ public class NumberSorter extends JFrame {
             final int index = i;
             numButton.addActionListener(event -> {
                 if (numbers[index] <= 30) {
-                    generateNumbers(numbers.length);
+                    generateNumbers(numbers[index]);
                 } else {
                     JOptionPane.showMessageDialog(this,
                             "Please select a value smaller or equal to 30.");
