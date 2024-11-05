@@ -15,6 +15,8 @@ public class NumberSorter extends JFrame {
     private static final Color TEXT_WHITE = Color.WHITE;
     public static final int MAX_SMALL_NUMBER = 30;
     public static final int MAX_LARGE_NUMBER = 1000;
+    private static final int MAX_COUNT = 1000;
+    private static final int MIN_COUNT = 1;
 
     private JPanel introPanel;
     private JPanel sortPanel;
@@ -82,13 +84,11 @@ public class NumberSorter extends JFrame {
         return event -> {
             try {
                 int count = Integer.parseInt(numberInput.getText().trim());
-                if (count > 1000) {
-                    JOptionPane.showMessageDialog(this, "Please enter a number less than or equal to 1000");
-                } else if (count > 0) {
+                if (MAX_COUNT < count || count < MIN_COUNT) {
+                    JOptionPane.showMessageDialog(this, String.format("Please enter a number in range: %d-%d", MIN_COUNT, MAX_COUNT));
+                } else {
                     generateNumbers(count);
                     switchToSortPanel();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Please enter a positive number");
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Please enter a valid number");
