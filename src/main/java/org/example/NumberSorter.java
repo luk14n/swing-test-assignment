@@ -82,7 +82,9 @@ public class NumberSorter extends JFrame {
         return event -> {
             try {
                 int count = Integer.parseInt(numberInput.getText().trim());
-                if (count > 0) {
+                if (count > 1000) {
+                    JOptionPane.showMessageDialog(this, "Please enter a number less than or equal to 1000");
+                } else if (count > 0) {
                     generateNumbers(count);
                     switchToSortPanel();
                 } else {
