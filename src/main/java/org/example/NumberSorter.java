@@ -37,6 +37,7 @@ public class NumberSorter extends JFrame {
     private static final int MAX_COUNT = 1000;
     private static final int MIN_COUNT = 1;
     public static final String ARIAL_FONT = "Arial";
+    public static final int MAX_NUMBERS_PER_COLUMN = 10;
 
     private JPanel introPanel;
     private JPanel sortPanel;
@@ -191,7 +192,7 @@ public class NumberSorter extends JFrame {
     // Updates numbers display with current sorting state
     private void updateNumbersDisplay() {
         numbersPanel.removeAll();
-        int columns = (numbers.length + 9) / 10;
+        int columns = (numbers.length + 9) / MAX_NUMBERS_PER_COLUMN;
         JPanel[] columnPanels = new JPanel[columns];
 
         for (int i = 0; i < columns; i++) {
@@ -215,7 +216,7 @@ public class NumberSorter extends JFrame {
                 }
             });
 
-            columnPanels[i / 10].add(numButton);
+            columnPanels[i / MAX_NUMBERS_PER_COLUMN].add(numButton);
         }
 
         numbersPanel.revalidate();
