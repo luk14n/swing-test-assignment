@@ -17,6 +17,7 @@ public class NumberSorter extends JFrame {
     public static final int MAX_LARGE_NUMBER = 1000;
     private static final int MAX_COUNT = 1000;
     private static final int MIN_COUNT = 1;
+    public static final String ARIAL_FONT = "Arial";
 
     private JPanel introPanel;
     private JPanel sortPanel;
@@ -51,12 +52,12 @@ public class NumberSorter extends JFrame {
 
         // Question style
         JLabel label = new JLabel("How many numbers to display?");
-        label.setFont(new Font("Arial", Font.PLAIN, 24));
+        label.setFont(new Font(ARIAL_FONT, Font.PLAIN, 24));
 
         // Input box style
         numberInput = new JTextField(20);
         numberInput.setPreferredSize(new Dimension(150, 40));
-        numberInput.setFont(new Font("Arial", Font.PLAIN, 16));
+        numberInput.setFont(new Font(ARIAL_FONT, Font.PLAIN, 16));
 
         // Enter button style
         JButton enterButton = createStyledButton("Enter", BUTTON_BLUE);
@@ -159,7 +160,7 @@ public class NumberSorter extends JFrame {
         };
 
         button.setForeground(TEXT_WHITE);
-        button.setFont(new Font("Arial", Font.PLAIN, 16));
+        button.setFont(new Font(ARIAL_FONT, Font.PLAIN, 16));
         button.setFocusPainted(false);
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
