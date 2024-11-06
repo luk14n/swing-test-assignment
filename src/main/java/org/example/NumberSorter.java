@@ -9,6 +9,7 @@ import javax.swing.Box;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.JScrollPane;
+import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -47,7 +48,7 @@ public class NumberSorter extends JFrame {
 
     public NumberSorter() {
         setTitle("Number Sorter");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         // set window size
         setSize(1000, 800);
         setLocationRelativeTo(null);
