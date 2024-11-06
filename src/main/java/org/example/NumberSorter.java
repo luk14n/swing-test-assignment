@@ -25,7 +25,13 @@ import java.awt.event.ActionListener;
 import java.util.Random;
 
 /**
- * NumberSorter app test assignment
+ * The NumberSorter class provides a Swing-based user interface for sorting and manipulating a set of random numbers.
+ * Users can specify the number of numbers to generate, and the application will display them in a grid.
+ * The user can then sort the numbers in ascending or descending order using a quicksort algorithm.
+ * Additionally, users can select a number from the grid to generate a new set of numbers up to that value.
+ *
+ * @author Muzyka Lukian
+ * @version 1.0
  */
 public class NumberSorter extends JFrame {
     // Create colors for further usage
@@ -47,6 +53,12 @@ public class NumberSorter extends JFrame {
     private int[] numbers;
     private boolean isSorted = false;
 
+    /**
+     * Constructs a new NumberSorter frame.
+     * Sets the title, default close operation, window size, and background color.
+     * Creates the intro and sort panels and adds the intro panel to the frame.
+     * Makes the frame visible.
+     */
     public NumberSorter() {
         setTitle("Number Sorter");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -64,7 +76,10 @@ public class NumberSorter extends JFrame {
         setVisible(true);
     }
 
-    // Intro screen
+    /**
+     * Creates the intro panel, which includes a label, a text field, and an "Enter" button.
+     * The "Enter" button calls the getActionListener() method when clicked.
+     */
     private void createIntroPanel() {
         introPanel = new JPanel(new GridBagLayout());
         introPanel.setBackground(Color.WHITE);
@@ -101,6 +116,13 @@ public class NumberSorter extends JFrame {
         introPanel.add(enterButton, gbc);
     }
 
+    /**
+     * Returns an ActionListener that is used for the "Enter" button in the intro panel.
+     * The ActionListener parses the user input, validates the number, and calls the generateNumbers() method if valid.
+     * If the input is invalid, it displays an error message.
+     *
+     * @return the ActionListener for the "Enter" button
+     */
     private ActionListener getActionListener() {
         return event -> {
             try {
@@ -117,7 +139,10 @@ public class NumberSorter extends JFrame {
         };
     }
 
-    // Sort screen
+    /**
+     * Creates the sort panel, which includes a button panel with "Sort" and "Reset" buttons,
+     * and a numbers panel that displays the generated numbers.
+     */
     private void createSortPanel() {
         sortPanel = new JPanel(new BorderLayout(20, 20));
         sortPanel.setBackground(Color.WHITE);
@@ -165,7 +190,13 @@ public class NumberSorter extends JFrame {
         sortPanel.add(new JScrollPane(numbersPanel), BorderLayout.CENTER);
     }
 
-    // Button style
+    /**
+     * Creates a styled button with the given text and background color.
+     *
+     * @param text            the text to display on the button
+     * @param backgroundColor the background color of the button
+     * @return the styled button
+     */
     private JButton createStyledButton(String text, Color backgroundColor) {
         JButton button = new JButton(text) {
             @Override
@@ -189,7 +220,11 @@ public class NumberSorter extends JFrame {
         return button;
     }
 
-    // Updates numbers display with current sorting state
+    /**
+     * Updates the numbers display in the sort panel with the current sorting state.
+     * It creates a grid of panels, each displaying a number button.
+     * The number buttons are styled using the createStyledButton() method.
+     */
     private void updateNumbersDisplay() {
         numbersPanel.removeAll();
         int columns = (numbers.length + 9) / MAX_NUMBERS_PER_COLUMN;
@@ -223,7 +258,13 @@ public class NumberSorter extends JFrame {
         numbersPanel.repaint();
     }
 
-    // Generates random numbers and adds a small number for demonstration
+    /**
+     * Generates an array of random numbers, with one number being less than or equal to 30.
+     * The number of elements in the array is determined by the provided count.
+     * The array is then stored in the numbers field, and the updateNumbersDisplay() method is called to update the display.
+     *
+     * @param count the number of elements to generate
+     */
     private void generateNumbers(int count) {
         Random random = new Random();
         numbers = new int[count];
@@ -236,9 +277,10 @@ public class NumberSorter extends JFrame {
         updateNumbersDisplay();
     }
 
-    /*
-     * It is only sorting once instead of on every button click
-     * It uses the stored sorted array for further button clicks
+    /**
+     * Starts the sorting process. If the array is not yet sorted, it calls the quickSort() method to sort the array.
+     * If the array is already sorted, it calls the reverseArray() method to reverse the order of the elements.
+     * The updateNumbersDisplay() method is called to update the display with the new sorting state.
      */
     private void startSorting() {
         isDescending = !isDescending;
@@ -252,6 +294,12 @@ public class NumberSorter extends JFrame {
         updateNumbersDisplay();
     }
 
+    /**
+     * Performs a quicksort algorithm to sort the numbers array in the given range.
+     *
+     * @param low  the starting index of the range to sort
+     * @param high the ending index of the range to sort
+     */
     private void quickSort(int low, int high) {
         if (low >= high) {
             return;
@@ -268,6 +316,14 @@ public class NumberSorter extends JFrame {
         quickSort(leftPointer + 1, high);
     }
 
+    /**
+     * Partitions the numbers array around a pivot element, based on the sort direction (ascending or descending).
+     *
+     * @param lowIndex  the starting index of the partition
+     * @param highIndex the ending index of the partition
+     * @param pivot     the pivot element
+     * @return the index of the pivot element after partitioning
+     */
     private int partition(int lowIndex, int highIndex, int pivot) {
         int leftPointer = lowIndex;
         int rightPointer = highIndex - 1;
@@ -302,13 +358,22 @@ public class NumberSorter extends JFrame {
         return leftPointer;
     }
 
+    /**
+     * Swaps the elements at the given indices in the numbers array.
+     *
+     * @param i the index of the first element to swap
+     * @param j the index of the second element to swap
+     */
     private void swap(int i, int j) {
         int temp = numbers[i];
         numbers[i] = numbers[j];
         numbers[j] = temp;
     }
 
-    // Switches to the sorting screen
+    /**
+     * Switches the displayed content to the sort panel.
+     * It removes all components from the content pane, adds the sort panel, and revalidates and repaints the frame.
+     */
     private void switchToSortPanel() {
         getContentPane().removeAll();
         getContentPane().add(sortPanel);
@@ -317,7 +382,11 @@ public class NumberSorter extends JFrame {
         repaint();
     }
 
-    // Switches back to the intro screen
+    /**
+     * Switches the displayed content to the intro panel.
+     * It removes all components from the content pane, adds the intro panel, clears the number input field,
+     * sets the isSorted flag to false, and revalidates and repaints the frame.
+     */
     private void switchToIntroPanel() {
         getContentPane().removeAll();
         getContentPane().add(introPanel);
@@ -327,6 +396,9 @@ public class NumberSorter extends JFrame {
         repaint();
     }
 
+    /**
+     * Reverses the order of the elements in the numbers array.
+     */
     private void reverseArray() {
         int left = 0;
         int right = numbers.length - 1;
