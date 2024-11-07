@@ -50,7 +50,7 @@ public class NumberSorter extends JFrame {
     private static final int MIN_COUNT = 1;
     public static final String ARIAL_FONT = "Arial";
     public static final int MAX_NUMBERS_PER_COLUMN = 10;
-    public static final Random RANDOM = new Random();
+    public static final Random random = new Random();
     public static final int SLEEP_TIME = 300;
 
     private ExecutorService executorService;
@@ -286,10 +286,10 @@ public class NumberSorter extends JFrame {
     private void generateNumbers(int count) {
         numbers = new int[count];
         for (int i = 0; i < count; i++) {
-            numbers[i] = RANDOM.nextInt(MAX_LARGE_NUMBER) + 1;
+            numbers[i] = random.nextInt(MAX_LARGE_NUMBER) + 1;
         }
-        int indexOfNumberLessOrEqualThanThirty = RANDOM.nextInt(count);
-        numbers[indexOfNumberLessOrEqualThanThirty] = RANDOM.nextInt(MAX_SMALL_NUMBER) + 1;
+        int indexOfNumberLessOrEqualThanThirty = random.nextInt(count);
+        numbers[indexOfNumberLessOrEqualThanThirty] = random.nextInt(MAX_SMALL_NUMBER) + 1;
         updateNumbersDisplay();
     }
 
@@ -327,7 +327,7 @@ public class NumberSorter extends JFrame {
         }
 
         // Choose random pivot
-        int pivotIndex = RANDOM.nextInt(high - low) + low;
+        int pivotIndex = random.nextInt(high - low) + low;
         int pivot = numbers[pivotIndex];
         swap(pivotIndex, high);
 
