@@ -333,7 +333,7 @@ public class NumberSorter extends JFrame {
 
         int leftPointer = partition(low, high, pivot);
 
-        sleep(SLEEP_TIME);
+        sleep();
 
         // Recurse on the left and right parts
         quickSort(low, leftPointer - 1);
@@ -411,7 +411,7 @@ public class NumberSorter extends JFrame {
             buttonJ.setBackground(BUTTON_RED);
         });
 
-        sleep(SLEEP_TIME);
+        sleep();
 
         int temp = numbers[i];
         numbers[i] = numbers[j];
@@ -425,7 +425,7 @@ public class NumberSorter extends JFrame {
             buttonJ.setBackground(BUTTON_BLUE);
         });
 
-        sleep(SLEEP_TIME);
+        sleep();
     }
 
     /**
@@ -436,9 +436,9 @@ public class NumberSorter extends JFrame {
      * an orderly shutdown where previously submitted tasks are executed, but no new tasks will be accepted.
      * </p>
      */
-    private static void sleep(int millis) {
+    private static void sleep() {
         try {
-            Thread.sleep(millis);
+            Thread.sleep(NumberSorter.SLEEP_TIME);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
