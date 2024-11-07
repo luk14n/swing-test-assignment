@@ -22,7 +22,12 @@ import java.awt.Insets;
 import java.awt.FlowLayout;
 import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * The NumberSorter class provides a Swing-based user interface for sorting and manipulating a set of random numbers.
@@ -37,6 +42,7 @@ public class NumberSorter extends JFrame {
     // Create colors for further usage
     private static final Color BUTTON_BLUE = new Color(67, 110, 238);
     private static final Color BUTTON_GREEN = new Color(46, 184, 93);
+    public static final Color BUTTON_RED = Color.RED;
     private static final Color TEXT_WHITE = Color.WHITE;
     public static final int MAX_SMALL_NUMBER = 30;
     public static final int MAX_LARGE_NUMBER = 1000;
@@ -44,14 +50,18 @@ public class NumberSorter extends JFrame {
     private static final int MIN_COUNT = 1;
     public static final String ARIAL_FONT = "Arial";
     public static final int MAX_NUMBERS_PER_COLUMN = 10;
+    public static final Random RANDOM = new Random();
+    public static final int SLEEP_TIME = 300;
 
+    private ExecutorService executorService;
+    private List<JButton> numButtons = new ArrayList<>();
     private JPanel introPanel;
     private JPanel sortPanel;
     private JTextField numberInput;
     private JPanel numbersPanel;
     private boolean isDescending = false;
+    private boolean isInSortingProgress = false;
     private int[] numbers;
-    private boolean isSorted = false;
 
     /**
      * Constructs a new NumberSorter frame.
@@ -182,7 +192,7 @@ public class NumberSorter extends JFrame {
         numbersPanel.setBackground(Color.WHITE);
 
         // Listeners to execute required methods when buttons pressed
-        sortButton.addActionListener(event -> startSorting());
+        sortButton.addActionListener(event -> startSortingWithExecutor());
         resetButton.addActionListener(event -> switchToIntroPanel());
 
         numbersPanel.setBorder(null);
@@ -203,7 +213,7 @@ public class NumberSorter extends JFrame {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(backgroundColor);
+                g2.setColor(getBackground());
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 5, 5);
                 g2.dispose();
                 super.paintComponent(g);
@@ -216,6 +226,7 @@ public class NumberSorter extends JFrame {
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
         button.setOpaque(false);
+        button.setBackground(backgroundColor);
 
         return button;
     }
@@ -227,6 +238,7 @@ public class NumberSorter extends JFrame {
      */
     private void updateNumbersDisplay() {
         numbersPanel.removeAll();
+        numButtons = new ArrayList<>();  // Clear the list before adding new buttons
         int columns = (numbers.length + 9) / MAX_NUMBERS_PER_COLUMN;
         JPanel[] columnPanels = new JPanel[columns];
 
@@ -243,20 +255,26 @@ public class NumberSorter extends JFrame {
 
             final int index = i;
             numButton.addActionListener(event -> {
-                if (numbers[index] <= MAX_SMALL_NUMBER) {
-                    generateNumbers(numbers[index]);
-                } else {
+                if (isInSortingProgress) {
                     JOptionPane.showMessageDialog(this,
-                            "Please select a value smaller or equal to 30.");
+                            "Please wait, sorting in progress");
+                } else {
+                    if (numbers[index] <= MAX_SMALL_NUMBER) {
+                        generateNumbers(numbers[index]);
+                    } else {
+                        JOptionPane.showMessageDialog(this,
+                                "Please select a value smaller or equal to 30.");
+                    }
                 }
             });
-
+            // Add button to the list
+            numButtons.add(numButton);
             columnPanels[i / MAX_NUMBERS_PER_COLUMN].add(numButton);
         }
-
         numbersPanel.revalidate();
         numbersPanel.repaint();
     }
+
 
     /**
      * Generates an array of random numbers, with one number being less than or equal to 30.
@@ -266,14 +284,12 @@ public class NumberSorter extends JFrame {
      * @param count the number of elements to generate
      */
     private void generateNumbers(int count) {
-        Random random = new Random();
         numbers = new int[count];
-        isSorted = false;
         for (int i = 0; i < count; i++) {
-            numbers[i] = random.nextInt(MAX_LARGE_NUMBER) + 1;
+            numbers[i] = RANDOM.nextInt(MAX_LARGE_NUMBER) + 1;
         }
-        int indexOfNumberLessOrEqualThanThirty = random.nextInt(count);
-        numbers[indexOfNumberLessOrEqualThanThirty] = random.nextInt(MAX_SMALL_NUMBER) + 1;
+        int indexOfNumberLessOrEqualThanThirty = RANDOM.nextInt(count);
+        numbers[indexOfNumberLessOrEqualThanThirty] = RANDOM.nextInt(MAX_SMALL_NUMBER) + 1;
         updateNumbersDisplay();
     }
 
@@ -282,16 +298,21 @@ public class NumberSorter extends JFrame {
      * If the array is already sorted, it calls the reverseArray() method to reverse the order of the elements.
      * The updateNumbersDisplay() method is called to update the display with the new sorting state.
      */
-    private void startSorting() {
-        isDescending = !isDescending;
-
-        if (!isSorted) {
-            quickSort(0, numbers.length - 1);
-            isSorted = true;
+    private void startSortingWithExecutor() {
+        if (isInSortingProgress) {
+            JOptionPane.showMessageDialog(this,
+                    "Please wait, sorting in progress");
         } else {
-            reverseArray();
+            isInSortingProgress = true;
+            // Submit the sorting task to the executor
+            executorService.submit(() -> {
+                isDescending = !isDescending;
+
+                // Start the quicksort with periodic updates
+                quickSort(0, numbers.length - 1);
+                isInSortingProgress = false;
+            });
         }
-        updateNumbersDisplay();
     }
 
     /**
@@ -306,14 +327,31 @@ public class NumberSorter extends JFrame {
         }
 
         // Choose random pivot
-        int pivotIndex = new Random().nextInt(high - low) + low;
+        int pivotIndex = RANDOM.nextInt(high - low) + low;
         int pivot = numbers[pivotIndex];
         swap(pivotIndex, high);
 
         int leftPointer = partition(low, high, pivot);
 
+        sleep(SLEEP_TIME);
+
+        // Recurse on the left and right parts
         quickSort(low, leftPointer - 1);
         quickSort(leftPointer + 1, high);
+    }
+
+    /**
+     * Shuts down the {@code executorService} if it is not already shut down.
+     * <p>
+     * This method checks if the {@code executorService} is not {@code null} and has not been shut down.
+     * If both conditions are met, it calls the {@code shutdown()} method on the executor to initiate
+     * an orderly shutdown where previously submitted tasks are executed, but no new tasks will be accepted.
+     * </p>
+     */
+    private void shutdownExecutor() {
+        if (executorService != null && !executorService.isShutdown()) {
+            executorService.shutdown();
+        }
     }
 
     /**
@@ -365,9 +403,45 @@ public class NumberSorter extends JFrame {
      * @param j the index of the second element to swap
      */
     private void swap(int i, int j) {
+        JButton buttonI = numButtons.get(i);
+        JButton buttonJ = numButtons.get(j);
+
+        SwingUtilities.invokeLater(() -> {
+            buttonI.setBackground(BUTTON_RED);
+            buttonJ.setBackground(BUTTON_RED);
+        });
+
+        sleep(SLEEP_TIME);
+
         int temp = numbers[i];
         numbers[i] = numbers[j];
         numbers[j] = temp;
+
+        SwingUtilities.invokeLater(() -> {
+            buttonI.setText(String.valueOf(numbers[i]));
+            buttonJ.setText(String.valueOf(numbers[j]));
+
+            buttonI.setBackground(BUTTON_BLUE);
+            buttonJ.setBackground(BUTTON_BLUE);
+        });
+
+        sleep(SLEEP_TIME);
+    }
+
+    /**
+     * Shuts down the {@code executorService} if it is not already shut down.
+     * <p>
+     * This method checks if the {@code executorService} is not {@code null} and has not been shut down.
+     * If both conditions are met, it calls the {@code shutdown()} method on the executor to initiate
+     * an orderly shutdown where previously submitted tasks are executed, but no new tasks will be accepted.
+     * </p>
+     */
+    private static void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     /**
@@ -377,9 +451,9 @@ public class NumberSorter extends JFrame {
     private void switchToSortPanel() {
         getContentPane().removeAll();
         getContentPane().add(sortPanel);
-        isSorted = false;
         revalidate();
         repaint();
+        executorService = Executors.newSingleThreadExecutor();
     }
 
     /**
@@ -391,24 +465,22 @@ public class NumberSorter extends JFrame {
         getContentPane().removeAll();
         getContentPane().add(introPanel);
         numberInput.setText("");
-        isSorted = false; // Sorting logic resets after reset
         revalidate();
         repaint();
+        shutdownExecutor();
+        isInSortingProgress = false;
+        numbers = new int[0];
+        numButtons = Collections.emptyList();
     }
 
     /**
-     * Reverses the order of the elements in the numbers array.
+     * The main method that serves as the entry point for the application.
+     * This method schedules the application to run on the Event Dispatch Thread (EDT),
+     * using {@link SwingUtilities#invokeLater}. This ensures that the GUI will be created
+     * and updated in a thread-safe manner.
+     *
+     * @param args the command-line arguments (not used in this application)
      */
-    private void reverseArray() {
-        int left = 0;
-        int right = numbers.length - 1;
-        while (left < right) {
-            swap(left, right);
-            left++;
-            right--;
-        }
-    }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(NumberSorter::new);
     }
